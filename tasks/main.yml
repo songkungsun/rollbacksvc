@@ -1,0 +1,38 @@
+---
+# tasks file for roles/rollbacksvc
+###########################################3
+# 1) 방화벽 포트 제거:
+#   - http
+#   - https
+# 2) 서비스 종료:
+#   - http
+#   - firewalld
+# 3) 웹서비스 설정 삭제
+#   - /etc/httpd/conf.d/vhost.conf
+#   - /var/www/html/index.html
+#   - /var/www/vhosts
+# 4) 패키지 삭제
+#   - httpd
+#   - mod_ssl
+###########################################3
+- name: 방화벽 포트 제거
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: disabled
+  loop: "{{ fw_rules }}"
+
+- name: 서비스 종료
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: false
+    state: stopped
+  loop: "{{ svcs }}"
+
+- name: 웹 서비스 설정 파일 삭제
+  ansible.builtin.file:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ web_files }}"
+

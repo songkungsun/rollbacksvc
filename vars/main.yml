@@ -1,0 +1,9 @@
+---
+# vars file for roles/rollbacksvc
+fw_rules:
+  - http
+  - https
+
+svcs:
+  - httpd
+  - firewalld
